@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+echo "---> Installing application source..."
+ls -l /tmp/src/
+mv /tmp/src/* /srv/shiny-server/
+
+
+ls -l /srv/shiny-server/
+#INSTALL R PACKAGES
+if [ -f /srv/shiny-server/R.libs ]; then
+  R_LIBS=$(cat /srv/shiny-server/R.libs | sed -n -e 'H;${x;s/\n/ /g;s/^ //;p;}')
+  echo "Installing CRAN packages: '$R_LIBS'" && install2.r --error $R_LIBS;
+fi
+
+#INSTALL RPACKAGES FROM GITHUB
+
+if [ -f /srv/shiny-server/RGH.libs ]; then
+  R_GH_LIBS=$(cat /srv/shiny-server/RGH.libs | sed -n -e 'H;${x;s/\n/ /g;s/^ //;p;}')
+  echo "Installing GitHub packages: '$R_GH_LIBS'" && install2.r --error remotes R -e "lapply(strsplit(Sys.getenv('R_GH_LIBS'), '\\\s+')[[1]], remotes::install_github)";
+fi

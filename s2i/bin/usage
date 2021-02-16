@@ -1,0 +1,6 @@
+#!/bin/bash -e
+cat <<EOF
+R Shiny source to image based on rocker/shiny .
+EOF
+
+
